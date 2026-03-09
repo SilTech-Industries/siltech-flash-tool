@@ -98,8 +98,13 @@ if !HAS_BOOTLOADER!==1 if !HAS_PARTITIONS!==1 (
 set FLASH_SIZE=detect
 
 :: ── Setup ───────────────────────────────────────────────────
+if not exist "logs" mkdir logs
 set COUNT=0
 set FAIL_COUNT=0
+
+:: Get date safely (locale-independent)
+for /f "tokens=*" %%d in ('powershell -NoProfile -Command "Get-Date -Format yyyy-MM-dd"') do set LOGDATE=%%d
+set LOGFILE=logs\flash_!LOGDATE!.log
 
 :: ── Production Loop ─────────────────────────────────────────
 :FLASH_LOOP
@@ -144,14 +149,14 @@ echo   --------------------------------------------------------
 echo.
 
 if "!FLASH_TYPE!"=="FULL" (
-    esptool.exe --port %COMPORT% --baud 460800 --chip esp32 --after hard_reset ^
-      write_flash --flash_mode dio --flash_size !FLASH_SIZE! ^
+    esptool.exe --port %COMPORT% --baud 460800 --chip esp32 --after hard-reset ^
+      write-flash --flash-mode dio --flash-size !FLASH_SIZE! ^
       0x1000  firmware\!DEVNAME!\bootloader.bin ^
       0x8000  firmware\!DEVNAME!\partitions.bin ^
       0x10000 firmware\!DEVNAME!\firmware.bin
 ) else (
-    esptool.exe --port %COMPORT% --baud 460800 --chip esp32 --after hard_reset ^
-      write_flash 0x10000 firmware\!DEVNAME!\firmware.bin
+    esptool.exe --port %COMPORT% --baud 460800 --chip esp32 --after hard-reset ^
+      write-flash 0x10000 firmware\!DEVNAME!\firmware.bin
 )
 
 if %ERRORLEVEL% NEQ 0 (
@@ -162,7 +167,7 @@ if %ERRORLEVEL% NEQ 0 (
     echo   #   Check cable and try again.          #
     echo   ########################################
     echo.
-    echo   [%date% %time%] FAIL #!FAIL_COUNT! - !DEVNAME! on %COMPORT% >> logs\flash_%date:~-4%%date:~4,2%%date:~7,2%.log
+    echo   [%date% %time%] FAIL #!FAIL_COUNT! - !DEVNAME! on %COMPORT% >> !LOGFILE!
     pause
     goto :FLASH_LOOP
 )
@@ -174,7 +179,7 @@ echo   ========================================
 echo    FLASH OK!   #!COUNT!
 echo   ========================================
 echo.
-echo   [%date% %time%] OK #!COUNT! - !DEVNAME! on %COMPORT% >> logs\flash_%date:~-4%%date:~4,2%%date:~7,2%.log
+echo   [%date% %time%] OK #!COUNT! - !DEVNAME! on %COMPORT% >> !LOGFILE!
 
 :: ── Serial Monitor ──────────────────────────────────────────
 echo   Starting monitor... (Q + Enter to stop)
