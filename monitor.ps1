@@ -59,15 +59,6 @@ Write-Host "   R + Enter = Reset  |  Q + Enter = Quit" -ForegroundColor Yellow
 Write-Host "  ================================================" -ForegroundColor Green
 Write-Host ""
 
-# --- Hard reset device so boot output is captured ---
-Write-Host "  Resetting device..." -ForegroundColor Yellow
-$port.DtrEnable = $false
-$port.RtsEnable = $true
-Start-Sleep -Milliseconds 100
-$port.RtsEnable = $false
-Start-Sleep -Milliseconds 100
-Write-Host ""
-
 Add-Content -Path $logFile -Value "`n=== Monitor $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') on $ComPort ==="
 
 $inputBuffer = ""
