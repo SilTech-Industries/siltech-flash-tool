@@ -157,20 +157,11 @@ if "!FLASH_TYPE!"=="FULL" (
     if /i "!DEVNAME!"=="BusLog4G_Bat_IO"    set FLASH_SIZE=16MB& set SPIFFS_OFFSET=0x820000
     if /i "!DEVNAME!"=="BusLog_IO_UNI_v1"   set FLASH_SIZE=16MB& set SPIFFS_OFFSET=0x820000
 
-    if exist "firmware\!DEVNAME!\spiffs.bin" (
-        esptool.exe --port %COMPORT% --baud 460800 --chip esp32 --after hard-reset ^
-          write-flash --flash-mode dio --flash-size !FLASH_SIZE! ^
-          0x1000  firmware\!DEVNAME!\bootloader.bin ^
-          0x8000  firmware\!DEVNAME!\partitions.bin ^
-          0x10000 firmware\!DEVNAME!\firmware.bin ^
-          !SPIFFS_OFFSET! firmware\!DEVNAME!\spiffs.bin
-    ) else (
-        esptool.exe --port %COMPORT% --baud 460800 --chip esp32 --after hard-reset ^
-          write-flash --flash-mode dio --flash-size !FLASH_SIZE! ^
-          0x1000  firmware\!DEVNAME!\bootloader.bin ^
-          0x8000  firmware\!DEVNAME!\partitions.bin ^
-          0x10000 firmware\!DEVNAME!\firmware.bin
-    )
+    esptool.exe --port %COMPORT% --baud 460800 --chip esp32 --after hard-reset ^
+      write-flash --flash-mode dio --flash-size !FLASH_SIZE! ^
+      0x1000  firmware\!DEVNAME!\bootloader.bin ^
+      0x8000  firmware\!DEVNAME!\partitions.bin ^
+      0x10000 firmware\!DEVNAME!\firmware.bin
 ) else (
     esptool.exe --port %COMPORT% --baud 460800 --chip esp32 --after hard-reset ^
       write-flash 0x10000 firmware\!DEVNAME!\firmware.bin
