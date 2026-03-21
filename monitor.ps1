@@ -55,7 +55,7 @@ try {
 Write-Host ""
 Write-Host "  ================================================" -ForegroundColor Green
 Write-Host "   Serial Monitor - $ComPort @ $BAUD" -ForegroundColor Green
-Write-Host "   Press Q + Enter to stop" -ForegroundColor Yellow
+Write-Host "   R + Enter = Reset  |  Q + Enter = Quit" -ForegroundColor Yellow
 Write-Host "  ================================================" -ForegroundColor Green
 Write-Host ""
 
@@ -117,7 +117,18 @@ while ($running -and $port.IsOpen) {
                 $running = $false
                 break
             }
-            if ($inputBuffer.Length -gt 0) {
+            if ($inputBuffer -eq "r" -or $inputBuffer -eq "R") {
+                Write-Host "  Resetting device..." -ForegroundColor Yellow
+                $port.DtrEnable = $false
+                $port.RtsEnable = $true
+                Start-Sleep -Milliseconds 100
+                $port.RtsEnable = $false
+                Start-Sleep -Milliseconds 100
+                $ts = Get-Date -Format "HH:mm:ss.fff"
+                Add-Content -Path $logFile -Value "[$ts] >> RESET"
+                $inputBuffer = ""
+            }
+            elseif ($inputBuffer.Length -gt 0) {
                 $port.WriteLine($inputBuffer)
                 $ts = Get-Date -Format "HH:mm:ss.fff"
                 Write-Host "[$ts] >> $inputBuffer" -ForegroundColor Yellow
