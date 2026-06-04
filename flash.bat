@@ -155,6 +155,8 @@ if "!FLASH_TYPE!"=="FULL" (
     if /i "!DEVNAME!"=="BusLog_4G_Lite"     set FLASH_SIZE=16MB& set SPIFFS_OFFSET=0x820000
     if /i "!DEVNAME!"=="BusLog4G_Bat_C"     set FLASH_SIZE=16MB& set SPIFFS_OFFSET=0x820000
     if /i "!DEVNAME!"=="BusLog4G_Bat_IO"    set FLASH_SIZE=16MB& set SPIFFS_OFFSET=0x820000
+    if /i "!DEVNAME!"=="BusLog4G_Bat_IO_v2" set FLASH_SIZE=16MB& set SPIFFS_OFFSET=0x820000
+    if /i "!DEVNAME!"=="BusLog4G_Bat_IO_v3" set FLASH_SIZE=16MB& set SPIFFS_OFFSET=0x820000
     if /i "!DEVNAME!"=="BusLog_IO_UNI_v1"   set FLASH_SIZE=16MB& set SPIFFS_OFFSET=0x820000
 
     esptool.exe --port %COMPORT% --baud 460800 --chip esp32 --after hard-reset ^
